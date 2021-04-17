@@ -1,6 +1,4 @@
-Last Modification : 2021.01.23
+Last Modification : 2021.04.17
 by HYOSITIVE
 
-This repository stores codes and files based on online class 'WEB2 - Node.js' by Egoing in opentutorials.
-
-Repository made in 2021.01.13, by moving every codes and files from Goorm IDE to Github with VSCode and Git.
+This repository stores codes and files based on online class 'WEB3 - Node.js - Cookie & Authenication' by Egoing in opentutorials.
