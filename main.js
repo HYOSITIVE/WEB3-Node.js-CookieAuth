@@ -1,6 +1,6 @@
 // Last Modification : 2021.04.25
 // by HYOSITIVE
-// based on WEB3 - Node.js - Cookie & Auth - 9.2
+// based on WEB3 - Node.js - Cookie & Auth - 9.3
 
 var http = require('http');
 var fs = require('fs');
@@ -211,6 +211,29 @@ var app = http.createServer(function(request,response){
 				// console.log(__dirname + _url); : 디렉토리와 query string의 값 출력
 				// response.end(fs.readFileSync(__dirname + _url)); : 사용자가 접근할 때마다 파일을 읽음
 				response.end(html);
+			});
+	}
+	
+	else if (pathname === '/login_process') {
+		var body = '';
+		request.on('data', function(data) {
+			body = body + data;
+		});
+		request.on('end', function() {
+			var post = qs.parse(body);
+			if(post.email === 'hyositive_test@gmail.com' && post.password === '111111') {
+				response.writeHead(302, {
+					'Set-Cookie': [
+						`email = ${post.email}`,
+						`password = ${post.password}`,
+						`nickname=egoing`
+					],
+					Location: `/`
+				});
+			} else {
+				response.end('Who?');
+			}
+			response.end();
 			});
 	}
 
