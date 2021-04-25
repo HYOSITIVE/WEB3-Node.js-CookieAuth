@@ -1,6 +1,6 @@
-// Last Modification : 2021.01.25
+// Last Modification : 2021.04.25
 // by HYOSITIVE
-// based on WEB2 - Node.js - 48
+// based on WEB3 - Node.js - Cookie & Auth - 9.2
 
 var http = require('http');
 var fs = require('fs');
@@ -47,7 +47,6 @@ var app = http.createServer(function(request,response){
 				// response.end(fs.readFileSync(__dirname + _url)); : 사용자가 접근할 때마다 파일을 읽음
 				response.end(html);
 			});
-			
 		}
 		
 		else { // 컨텐츠를 선택한 경우
@@ -193,6 +192,26 @@ var app = http.createServer(function(request,response){
 					response.end();
 			});
 		});
+	}
+	
+	else if (pathname ==='/login') {
+		fs.readdir('./data', function(error, filelist) {
+				var title = 'Login';
+				var list = template.list(filelist);
+				var html = template.HTML(title, list,
+					`
+					<form action="login_process" method="post">
+						<p><input type="text" name="email" placeholder="email"</p>
+						<p><input type="password" name="password" placeholder="password"</p>
+						<p><input type="submit"</p>
+					</form>`,
+					`<a href="/create">create</a>` // home에서는 update 기능 존재하지 않음
+					);
+				response.writeHead(200); // 200 : 파일을 정상적으로 전송했다.
+				// console.log(__dirname + _url); : 디렉토리와 query string의 값 출력
+				// response.end(fs.readFileSync(__dirname + _url)); : 사용자가 접근할 때마다 파일을 읽음
+				response.end(html);
+			});
 	}
 
 	// 그 외의 경로로 접속했을 때 - 에러
