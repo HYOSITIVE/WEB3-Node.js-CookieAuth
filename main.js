@@ -1,4 +1,4 @@
-// Last Modification : 2021.04.25
+// Last Modification : 2021.05.24
 // by HYOSITIVE
 // based on WEB3 - Node.js - Cookie & Auth - 9.3
 
@@ -223,10 +223,10 @@ var app = http.createServer(function(request,response){
 			var post = qs.parse(body);
 			if(post.email === 'hyositive_test@gmail.com' && post.password === '111111') {
 				response.writeHead(302, {
-					'Set-Cookie': [
+					'Set-Cookie': [ // email, password가 일치할 경우에만 쿠키 발행
 						`email = ${post.email}`,
 						`password = ${post.password}`,
-						`nickname=egoing`
+						`nickname=hyositive`
 					],
 					Location: `/`
 				});
