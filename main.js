@@ -1,6 +1,6 @@
 // Last Modification : 2021.05.24
 // by HYOSITIVE
-// based on WEB3 - Node.js - Cookie & Auth - 9.3
+// based on WEB3 - Node.js - Cookie & Auth - 9.4
 
 var http = require('http');
 var fs = require('fs');
@@ -10,26 +10,27 @@ var qs = require('querystring');
 var template = require('./lib/template.js');
 var path = require('path');
 var sanitizeHtml = require('sanitize-html'); // sanitize-html 패키지 사용
+var cookie = require('cookie');
+
+function authIsOwner(request, response) {
+	var isOwner = false;
+	var cookies = {}; // cookie가 존재하지 않을 경우, 추후 사용을 위해 미리 변수 선언
+	if (request.headers.cookie) { // cookie가 존재할 경우에만 실행
+		cookies = cookie.parse(request.headers.cookie);
+	};
+	if (cookies.email === 'hyositive_test@gmail.com' && cookies.password === '111111') {
+		isOwner = true;
+	};
+	return isOwner;
+}
 
 // Node.js 홈페이지를 통해 http와 같은 API 사용법 익힐 수 있음
 var app = http.createServer(function(request,response){
     var _url = request.url;
-	/*
-	query string의 값이 request.url에 들어감
-	console.log(_url); : 출력 시 /?id=HTML 과 같은 값 출력
-	*/
-
 	var queryData = url.parse(_url, true).query;
-	/*
-	url parsing을 통해 원하는 query string 데이터 획득. queryData에 들어있는 값은 객체 형태
-	console.log(queryData.id); : 출력 시 queryData의 id값을 출력
-	console.log(url.parse(_url, true)); : 위의 코드 실행 시 url에 대한 정보를 분석해 콘솔에 표시
-	 - path : queryString 포함
-	 - pathname : querySting을 제외한 path만을 포함
-	*/
-
 	var pathname = url.parse(_url, true).pathname;
-	
+	var isOwner = authIsOwner(request, response);
+	console.log(isOwner);
 	// root, 즉 path가 없는 경로로 접속했을 때 - 정상 접속
 	if (pathname === '/') {
 		if(queryData.id === undefined) { // 메인 페이지
