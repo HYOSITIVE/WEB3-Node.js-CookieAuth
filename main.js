@@ -1,6 +1,6 @@
-// Last Modification : 2021.05.24
+// Last Modification : 2021.05.25
 // by HYOSITIVE
-// based on WEB3 - Node.js - Cookie & Auth - 9.4
+// based on WEB3 - Node.js - Cookie & Auth - 9.5
 
 var http = require('http');
 var fs = require('fs');
@@ -12,7 +12,7 @@ var path = require('path');
 var sanitizeHtml = require('sanitize-html'); // sanitize-html 패키지 사용
 var cookie = require('cookie');
 
-function authIsOwner(request, response) {
+function authIsOwner(request, response) { // 사용자 인증
 	var isOwner = false;
 	var cookies = {}; // cookie가 존재하지 않을 경우, 추후 사용을 위해 미리 변수 선언
 	if (request.headers.cookie) { // cookie가 존재할 경우에만 실행
@@ -24,24 +24,31 @@ function authIsOwner(request, response) {
 	return isOwner;
 }
 
+function authStatusUI(request, response) { // 인증 상태에 따라 로그인 UI 변경
+	var authStatusUI = '<a href="/login">login</a>';
+	if (authIsOwner(request, response)) {
+		authStatusUI = '<a href="/logout_process">logout</a>';
+	}
+	return authStatusUI;
+}
+
 // Node.js 홈페이지를 통해 http와 같은 API 사용법 익힐 수 있음
 var app = http.createServer(function(request,response){
     var _url = request.url;
 	var queryData = url.parse(_url, true).query;
 	var pathname = url.parse(_url, true).pathname;
-	var isOwner = authIsOwner(request, response);
-	console.log(isOwner);
+	
 	// root, 즉 path가 없는 경로로 접속했을 때 - 정상 접속
 	if (pathname === '/') {
 		if(queryData.id === undefined) { // 메인 페이지
 			fs.readdir('./data', function(error, filelist) {
 				var title = 'Welcome';
 				var description = 'Hello, Node.js';
-
 				var list = template.list(filelist);
-				var html = template.HTML(title, list,
+				var html = template.HTML(title, list,	
 					`<h2>${title}</h2>${description}`,
-					`<a href="/create">create</a>` // home에서는 update 기능 존재하지 않음
+					`<a href="/create">create</a>`, // home에서는 update 기능 존재하지 않음
+					authStatusUI(request, response)
 					);
 				response.writeHead(200); // 200 : 파일을 정상적으로 전송했다.
 				// console.log(__dirname + _url); : 디렉토리와 query string의 값 출력
@@ -71,7 +78,7 @@ var app = http.createServer(function(request,response){
 						  <form action="delete_process" method="post">
 							  <input type="hidden" name="id" value="${sanitizedTitle}">
 							  <input type="submit" value="delete">			
-						  </form>`
+						  </form>`, authStatusUI(request, response)
 						);
 					response.writeHead(200); // 200 : 파일을 정상적으로 전송했다.
 					// console.log(__dirname + _url); : 디렉토리와 query string의 값 출력
@@ -98,7 +105,7 @@ var app = http.createServer(function(request,response){
 					<input type="submit">
 				</p>
 			</form>
-			`, ''); // control이 존재하지 않기 때문에 argument에 공백 문자 입력
+			`, '', authStatusUI(request, response)); // control이 존재하지 않기 때문에 argument에 공백 문자 입력
 			response.writeHead(200); 
 			response.end(html);
 		});
@@ -149,7 +156,8 @@ var app = http.createServer(function(request,response){
 						</p>
 					</form>
 					`,
-					`<a href="/create">create</a> <a href="/update?id=${title}">update</a>` // home이 아닐 경우 update 기능 존재, 수정할 파일 명시 위해 id 제공
+					`<a href="/create">create</a> <a href="/update?id=${title}">update</a>`, // home이 아닐 경우 update 기능 존재, 수정할 파일 명시 위해 id 제공
+					authStatusUI(request, response)
 					);
 				response.writeHead(200);
 				response.end(html);
