@@ -1,6 +1,6 @@
 // Last Modification : 2021.05.25
 // by HYOSITIVE
-// based on WEB3 - Node.js - Cookie & Auth - 9.6
+// based on WEB3 - Node.js - Cookie & Auth - 9.7
 
 var http = require('http');
 var fs = require('fs');
@@ -91,7 +91,11 @@ var app = http.createServer(function(request,response){
 	}
 
 	// 새로운 컨텐츠 생성
-	else if(pathname === '/create') { 
+	else if(pathname === '/create') {
+		if (authIsOwner(request, response) === false) {
+			response.end('Login required!!');
+			return false; // 아래의 코드 실행하지 않고 종료
+		}
 		fs.readdir('./data', function(error, filelist) {
 			var title = 'WEB - create';
 			var list = template.list(filelist);
@@ -112,7 +116,11 @@ var app = http.createServer(function(request,response){
 	}
 
 	// 컨텐츠 생성 작업
-	else if(pathname === '/create_process') { 
+	else if(pathname === '/create_process') {
+		if (authIsOwner(request, response) === false) {
+			response.end('Login required!!');
+			return false; // 아래의 코드 실행하지 않고 종료
+		}
 		var body = '';
 		// 데이터의 조각을 서버쪽에서 수신할 때마다, 서버는 callback 함수를 호출, data parameter를 통해 수신한 정보 제공
 		request.on('data', function(data) {
@@ -132,7 +140,11 @@ var app = http.createServer(function(request,response){
 	}
 
 	// 업데이트
-	else if(pathname === '/update') { 
+	else if(pathname === '/update') {
+		if (authIsOwner(request, response) === false) {
+			response.end('Login required!!');
+			return false; // 아래의 코드 실행하지 않고 종료
+		}
 		fs.readdir('./data', function(error, filelist) {
 			var	filteredId = path.parse(queryData.id).base;			
 			fs.readFile(`data/${fileteredId}`, 'utf8', function(err, description) {
@@ -166,7 +178,11 @@ var app = http.createServer(function(request,response){
 	}
 
 	// 업데이트 작업
-	else if(pathname === '/update_process') { 
+	else if(pathname === '/update_process') {
+		if (authIsOwner(request, response) === false) {
+			response.end('Login required!!');
+			return false; // 아래의 코드 실행하지 않고 종료
+		}
 		var body = '';
 		request.on('data', function(data) {
 			body = body + data;
@@ -187,7 +203,11 @@ var app = http.createServer(function(request,response){
 	}
 
 	// 삭제
-	else if(pathname === '/delete_process') { 
+	else if(pathname === '/delete_process') {
+		if (authIsOwner(request, response) === false) {
+			response.end('Login required!!');
+			return false; // 아래의 코드 실행하지 않고 종료
+		}
 		var body = '';
 		request.on('data', function(data) {
 			body = body + data;
@@ -239,14 +259,18 @@ var app = http.createServer(function(request,response){
 					],
 					Location: `/`
 				});
+			response.end();
 			} else {
 				response.end('Who?');
 			}
-			response.end();
-			});
+		});
 	}
 	
 	else if (pathname === '/logout_process') {
+		if (authIsOwner(request, response) === false) {
+			response.end('Login required!!');
+			return false; // 아래의 코드 실행하지 않고 종료
+		}
 		var body = '';
 		request.on('data', function(data) {
 			body = body + data;
